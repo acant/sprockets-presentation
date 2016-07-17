@@ -1,0 +1,42 @@
+title: Sprockets Asset Pipeline
+author: Andrew Sullivan Cant
+
+## History
+
+* Rails 5
+* Sprockets 3
+
+## Features of an asset pipeline
+
+- concatenate passets
+- pre-process (e.g., minify, compress, convert for other languages)
+- finger print assets
+
+## Details of the directives
+
+# Let use it with Rails!
+
+# Things to remember...
+
+* use directives for javascript
+* use import for SCSS
+
+## Use in Sinatra
+
+use gitdocs as an example
+
+## Use in Jekylll
+
+use shopify.github.io as an example
+
+# Attributions
+	http://www.publicdomainpictures.net/view-image.php?image=88048&picture=pipeline-closeup-underside
+		[assets/images/under.jpg]
+	https://en.wikipedia.org/wiki/NEL_pipeline#/media/File:Hasenhäge_NEL-Erdgas-Pipeline_Bau_2011-05-15_009.JPG
+		[assets/images/build.jpg]
+	https://www.flickr.com/photos/grand_canyon_nps/11718038445
+		[assets/images/water.jpg]
+	https://en.wikipedia.org/wiki/Trans-Alaska_Pipeline_System#/media/File:Trans-Alaska_Pipeline_System_Luca_Galuzzi_2005.jpg
+		[assets/images/trees.jpg]
+
+# Thanks! Questions?
