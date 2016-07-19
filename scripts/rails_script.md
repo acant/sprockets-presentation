@@ -1,3 +1,5 @@
+# Sprockets in rails walk-through
+
 1. Start a new application:
 ```
 gem install rails
@@ -6,7 +8,9 @@ cd example
 bundle install
 bundle exec rails s
 ```
+
 2. Browse to [http://localhost:3000].
+
 3. Review initial assets related paths:
 ```
 ls
@@ -16,6 +20,7 @@ cat app/assets/config/manifest.js
 cat app/assets/javascript/applications.js
 cat app/assets/stylesheets/application.css
 ```
+
 4. Add a simple page:
 ```
 bundle exec rails generate controller Home index
@@ -28,88 +33,125 @@ cat app/assets/stylesheets/home.scss
 % mention coffeescript and scss, as the current rails defaults
 
 6. browse to [http://localhost:3000/home/index]
-7. Add some other tags to the HTML:
+
+7. Add some other tags to the app/views/home/index.html.erb and refresh:
 ```
-echo "<p>Where is the pipline?</p>" >> app/views/home/index.html.erb
+<p>Where is the pipline?</p>
 ```
-8. Refresh browser
-9. Add some images to the page:
+
+8. Add some images to the page:
 ```
 cp ../../assets/images/*.jpg app/assets/images
 ```
 
-10. Add images to the HTML and refresh:
+9. Add images to the app/views/home/index.html.erb:
 ```
-echo '<div class="pictures">'
-echo "  <%= image_tag('under.jpg', class: 'under', alt: 'Under a pipe') %>" >> app/views/home/index.html.erb
-echo "</div>"
-```
-
-12. Add come colour:
-```
-echo "h1 { border-bottom: thick dotted #ff0000 }" >> app/assets/stylesheets/home.scss
+<div class="pictures">
+  <%= image_tag('under.jpg', class: 'under', alt: 'Under a pipe') %>
+</div>
 ```
 
-11. Add an image in the SCSS
+10. Add some colour to app/assets/stylesheets/home.scss:
 ```
-echo ".pictures { background-image: url(<%= asset_path 'trees.jpg' %>) top right /200px no-repeat }" >> app/assets/stylesheets/home.scss
+h1 { border-bottom: thick dotted #ff0000 }
 ```
 
-12. Derp! That raise an error needs to use an ERB template as well:
+11. Add an image to app/assets/stylesheets/home.scss:
+```
+.pictures { background-image: url(<%= asset_path 'trees.jpg' %>) top right /200px no-repeat }
+```
+
+12. Derp! That raises an error because it needs to be an ERB template:
 ```
 mv app/assets/stylesheets/home.scss app/assets/stylesheets/home.scss.erb
 ```
 
-13. Want to do the same thing with Javascript?
+13. Want to do the same thing with Javascript? Convert to an ERB template:
 ```
-app/assets/javascripts/home.coffee app/assets/javascripts/home.coffee.erb
-echo '$ ->' >> app/assets/javascripts/home.coffee.erb
-echo '$(".pictures").append("<img src=\"<%= asset_path('water.jpg') %>\">")' >> app/assets/javascripts/home.coffee.erb
+mv app/assets/javascripts/home.coffee app/assets/javascripts/home.coffee.erb
 ```
 
-14. Lets add a javascript gem! [fullcalendar-rails](https://github.com/bokmann/fullcalendar-rails)
+14. Then add some images through Javascript, app/assets/javascripts/home.coffee.erb:
 ```
-echo "gem 'fullcalendar-rails'" >> Gemfile
-echo "gem 'momentjs-rails'" >> Gemfile
+$ ->
+  $(".pictures").append("<img src=\"<%= asset_path('water.jpg') %>\">")
+```
+
+14. Lets add an asset! [fullcalendar-rails](https://github.com/bokmann/fullcalendar-rails)
+  - add to Gemfile
+    ```
+    gem 'fullcalendar-rails'
+    gem 'momentjs-rails'
+    ```
+  - add to app/assets/javascripts/application.js
+    ```
+    //= require moment
+    //= require fullcalendar
+    ```
+  - add to app/assets/stylesheets/application.css
+    ```
+    *= require fullcalendar
+    ```
+  - add to app/views/home/index.html.erb
+    ```
+    <div id="calendar"></div>
+    ```
+  - add to app/assets/javascripts/home.coffee.erb
+    ```
+      $("#calendar").fullCalendar({})
+    ```
+
+15. Install and restart, to re-load the gems
+```
 bundle install
-# restart the server to load the gems
-echo "//= require moment" >> app/assets/javascripts/application.js
-echo "//= require fullcalendar" >> app/assets/javascripts/application.js
-# add to "*= require fullcalendar" to app/assets/stylesheets/application.css
-echo '<div id="calendar"></div>' >> app/views/home/index.html.erb
-echo '  $("#calendar").fullCalendar({})' >> app/assets/javascripts/home.coffee.erb
+bundle exec rails server
 ```
 
-13. Lets add the bourbon asset gem...
+16. Lets add the bourbon asset gem...
+  - but first convert to use SCSS in our application stylesheet to allow
+    SCSS '@import' instead of sprockets require
+  - https://blog.pivotal.io/pivotal-labs/labs/structure-your-sass-files-with-import
 
-14. But first convert to use '@import' instead of require...
+  - rename the style sheet
+    ```
+    app/assets/stylesheets/application.css app/assets/stylesheets/application.scss
+    ```
+  - add to app/assets/stylesheets/application.scss
+    ```
+    @import "home";
+    ```
+  - remove the **require_tree** directive app/assets/stylesheets/application.scss
 
+
+17. Add bourbon
+  - add to the Gemfile
+    ```
+    gem 'bourbon'
+    ```
+  - add to app/assets/stylesheets/application.scss
+    ```
+    @import "bourbon"; # make sure it come before everything else
+    ```
+  - install and restart the server
+    ```
+    bundle install
+    bundle exec rails server
+    ```
+
+18. And add some simple bourbon styling to app/assets/stylesheets/home.scss.erb
 ```
-mv app/assets/stylesheets/application.css app/assets/stylesheets/application.scss
-echo '@import "home";' >> app/assets/stylesheets/application.scss
-# remove the require_tree directive
+p { @include linear-gradient(to left, red, orange) }
 ```
 
-https://blog.pivotal.io/pivotal-labs/labs/structure-your-sass-files-with-import
-
-15. back to the bourbon
-
-```
-echo "gem 'bourbon'" >> Gemfile
-bundle install
-# add '@import "bourbon";' before the home import
-
-```
-
-16. And add some bourbon styling
-```
-echo 'p { @include linear-gradient(to left, red, orange) }' >> app/assets/stylesheets/home.scss.erb
-```
-
-17. Lets look at the asset gems
+19. Lets look at the asset gems
 
 ```
 gem contents fullcalendar
 gem contents bourbon
 ```
 
+20. Test production
+```
+RAILS_ENV=production bundle exec rails assets:precompile
+RAILS_ENV=production bundle exec rails server
+```
