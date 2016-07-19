@@ -25,9 +25,9 @@ author: Andrew Sullivan Cant
 * in production you need to server you assets statically
   - or make Heroku do it!
 
-% # Use in Sinatra
+# Attempt in a sinatra based gem
 
-# Use in Jekylll
+# Attempt in Jekyll
 
 ## Attributions
 * /assets/images/under.jpg
